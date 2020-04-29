@@ -6,11 +6,12 @@ from .settings import \
 
 
 async def init_indexes(collection):
+    await collection.drop_indexes()
     await collection.create_index(
             [("secret_key", pymongo.HASHED)],
-            unique=True,
+            # unique=True,
             sparse=True,
-            expireAfterSeconds=int(secret_ttl.total_seconds())
+            expireAfterSeconds=secret_ttl
     )
 
 
@@ -21,8 +22,8 @@ async def init_db(app):
             password=db_password
     )
     app["db"] = client[db_name]
-    await init_indexes(app[db_collection])
+    await init_indexes(app['db'][db_collection])
 
 
 async def close_db(app):
-    app['db'].client().close()
+    app['db'].client.close()

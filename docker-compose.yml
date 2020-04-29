@@ -1,0 +1,41 @@
+version: "3.7"
+
+#volumes:
+#  sockets:
+
+networks:
+  db-net:
+    driver: "bridge"
+
+
+services:
+  db:
+    image: mongo:4.2-bionic
+    networks:
+      - "db-net"
+    env_file:
+      - "secrets.env"
+    volumes:
+      - "./mongodb/:/data/db/"
+    ports:
+      - "27017:27017"
+
+#  nginx:
+#    image: nginx:alpine
+#    ports:
+#      - "80:80"
+#    volumes:
+#      - "./confs/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
+#      - "sockets:/run/sockets/:ro"
+#      #- "./test_app.sock:/run/sockets/test_app.sock:ro"
+#    depends_on:
+#      - web
+
+#  web:
+#    build:
+#      "./secrets_web/"
+#    volumes:
+#      - "sockets:/run/sockets"
+#    networks:
+#      - "db-net"
+
