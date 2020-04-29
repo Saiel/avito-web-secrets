@@ -3,3 +3,4 @@ __pycache__/
 venv/
 mongodb/
 secrets.env
+src/test.py
