@@ -41,18 +41,27 @@ async def generate(request: web.Request) -> web.Response:
 
 @RequiredPostParameters(["phrase"])
 async def get_secret(request: web.Request) -> web.Response:
-    secret_key = request.match_info["secret_key"]
-    given_phrase = request["phrase"]
+    collection = request.app["db"][db_collection]
     
-    saved_secret = await request.app["db"].find_one_and_delete({
+    body = request["body"]
+    given_phrase = body["phrase"]
+    
+    secret_key = request.match_info["secret_key"]
+    
+    fil = {
         "secret_key": secret_key
-    })
+    }
+    saved_secret = await collection.find_one(fil)
 
-    if is_expired(saved_secret):
+    if await is_expired(saved_secret):
         return web.json_response({"Error": "Key not found"}, status=404)
 
     control_phrase = request.app["crypto"].decrypt(saved_secret["phrase"])
     if given_phrase != control_phrase:
         return web.json_response({"Error": "Incorrect phrase"}, status=403)
     
-    return web.json_response({"secret": saved_secret["secret"]}, status=200)
+    secret = request.app["crypto"].decrypt(saved_secret["secret"])
+    
+    await collection.delete_one(fil)
+    
+    return web.json_response({"secret": secret}, status=200)

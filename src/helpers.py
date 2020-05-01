@@ -26,8 +26,9 @@ class RequiredPostParameters:
                 except ValueError:
                     return web.json_response(self.explanation_body, status=400)
                 else:
-                    if "secret" not in body or "phrase" not in body:
-                        return web.json_response(self.explanation_body, status=400)
+                    for param in self.params:
+                        if param not in body:
+                            return web.json_response(self.explanation_body, status=400)
             else:
                 return web.json_response(self.explanation_body, status=400)
             
@@ -74,4 +75,4 @@ async def is_expired(
     elif "expires_at" not in secret_document:
         return False
     else:
-        return secret_document["expires_at"] > datetime.now()
+        return secret_document["expires_at"] < datetime.now()
