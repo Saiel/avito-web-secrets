@@ -1,0 +1,53 @@
+version: "3.7"
+
+volumes:
+  sockets:
+
+networks:
+  db-net:
+    driver: "bridge"
+
+
+services:
+  db:
+    image: mongo:4.2-bionic
+    networks:
+      - "db-net"
+    env_file:
+      - "secrets.env"
+    volumes:
+      - "./mongodb/:/data/db/"
+    ports:
+      - "27017:27017"
+    restart: "on-failure"
+
+  nginx:
+    image: nginx:alpine
+    command: sh -c "sleep 5
+                 && chmod a+w /run/sockets/*
+                 && nginx -g 'daemon off;'"
+    ports:
+      - "80:80"
+    volumes:
+      - "./confs/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "sockets:/run/sockets/"
+    depends_on:
+      - web
+    restart: "on-failure"
+
+  web:
+    build:
+      "./secrets_web/"
+    env_file:
+      - secrets.env
+    volumes:
+      - "sockets:/run/sockets"
+      - "./src/:/var/www/src/:ro"
+      - "./confs/supervisor/supervisord.conf:/var/www/supervisord.conf:ro"
+      - "./logs/web/:/var/log/"
+    networks:
+      - "db-net"
+    depends_on:
+      - db
+    restart: "on-failure"
+
