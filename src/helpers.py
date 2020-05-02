@@ -75,4 +75,5 @@ async def is_expired(
     elif "expires_at" not in secret_document:
         return False
     else:
+        print(datetime.now().isoformat())
         return secret_document["expires_at"] < datetime.now()
