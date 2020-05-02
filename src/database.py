@@ -15,30 +15,21 @@ from .settings import (
 async def init_indexes(collection):
     await collection.drop_indexes()
     await collection.create_index(
-            [("secret_key", pymongo.HASHED)],
-            sparse=True
-            # expireAfterSeconds=secret_ttl
+        [("secret_key", pymongo.HASHED)], sparse=True
     )
     await collection.create_index(
-            "secret_key",
-            unique=True,
-            expireAfterSeconds=secret_ttl
+        "secret_key", unique=True, expireAfterSeconds=secret_ttl
     )
-    # await collection.create_index(
-    #         "secret",
-    # )
 
 
 async def init_db(app):
     client = motor_asyncio.AsyncIOMotorClient(
-            host=db_host, port=db_port,
-            username=db_username,
-            password=db_password
+        host=db_host, port=db_port, username=db_username, password=db_password
     )
     app["db"] = client[db_name]
     await client.drop_database(db_name)
-    await init_indexes(app['db'][db_collection])
+    await init_indexes(app["db"][db_collection])
 
 
 async def close_db(app):
-    app['db'].client.close()
+    app["db"].client.close()
