@@ -2,5 +2,4 @@
 __pycache__/
 venv/
 mongodb/
-src/test.py
 logs/
