@@ -26,24 +26,24 @@ async def init_app(argv: Optional[list] = None):
 
 
 _parser = argparse.ArgumentParser()
-_parser.add_argument("-P",  "--port", dest="port")
+_parser.add_argument("-P", "--port", dest="port")
 _parser.add_argument("-U", "--socket", dest="socket")
 _parser.add_argument(
-        "--log-level",
-        dest="log_level",
-        choices=(
-            'CRITICAL',
-            'FATAL',
-            'ERROR',
-            'WARNING',
-            'INFO',
-            'DEBUG',
-            'NOTSET',
-        ),
-        default=logging.DEBUG
+    "--log-level",
+    dest="log_level",
+    choices=(
+        "CRITICAL",
+        "FATAL",
+        "ERROR",
+        "WARNING",
+        "INFO",
+        "DEBUG",
+        "NOTSET",
+    ),
+    default=logging.DEBUG,
 )
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     args = _parser.parse_args()
 
@@ -51,10 +51,10 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     try:
         web.run_app(
-                loop.run_until_complete(init_app()),
-                host="0.0.0.0",
-                port=args.port,
-                path=args.socket,
+            loop.run_until_complete(init_app()),
+            host="0.0.0.0",
+            port=args.port,
+            path=args.socket,
         )
     except KeyboardInterrupt:
         pass
