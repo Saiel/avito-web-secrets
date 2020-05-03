@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+"""Module with uni tests.
+
+"""
+
 from datetime import datetime, timedelta
 from typing import Optional, Union, Mapping
 
@@ -18,7 +23,7 @@ class HandlersTestCase(tu.AioHTTPTestCase):
         phrase: str,
         secret: str,
         ttl: Optional[Mapping[str, Union[float, int]]] = None,
-    ):
+    ) -> tu.ClientResponse:
         payload = {
             "phrase": phrase,
             "secret": secret,
@@ -32,7 +37,7 @@ class HandlersTestCase(tu.AioHTTPTestCase):
         phrase: str,
         secret: str,
         ttl: Optional[Mapping[str, Union[float, int]]] = None,
-    ):
+    ) -> str:
         resp = await self._add_secret(phrase, secret, ttl)
         self.assertEqual(resp.status, 201)
 
@@ -117,7 +122,7 @@ class HelpersTestCase(tu.AioHTTPTestCase):
         app.router.add_post("/", test_handler)
         return app
 
-    def test_explanation_body(self, body=None):
+    def test_explanation_body(self, body: Union[None, dict] = None):
         if body is None:
             body = RequiredPostParameters(
                 self.required_params
@@ -139,8 +144,8 @@ class HelpersTestCase(tu.AioHTTPTestCase):
     @tu.unittest_run_loop
     async def test_body_not_json(self):
         resp = await self.client.post(
-            "/", data="some body"
-        )  # once told me...
+            "/", data="some body"  # once told me...
+        )
         self.assertEqual(resp.status, 400)
         self.test_explanation_body(await resp.json())
 
