@@ -1,5 +1,5 @@
 aiohttp[speedups]==3.6.2
 supervisor==4.1.0
-cryptography==2.9.2
+cryptography==3.2
 motor==2.1.0
 coverage==5.1
